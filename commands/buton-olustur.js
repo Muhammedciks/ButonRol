@@ -9,7 +9,7 @@ const Discord = require('discord.js');
 
 module.exports.run = async (client, message, args) => {
 	const brmanager = new Nuggies.buttonroles();
-	message.channel.send('Mesajları `Rolİd renk Söz emoji` sözdiziminde gönderin! Bitirdikten sonra "bitti" deyin.');
+	message.channel.send('Send messages in `roleID color label emoji` syntax! Once finished say `done`.');
 
 	/**
 	 * @param {Discord.Message} m
@@ -18,17 +18,17 @@ module.exports.run = async (client, message, args) => {
 	const collector = message.channel.createMessageCollector(filter, { max: Infinity });
 
 	collector.on('collect', async (msg) => {
-		if (!msg.content) return message.channel.send('Geçersiz Sözdizimi');
+		if (!msg.content) return message.channel.send('Invalid syntax');
 		if (msg.content.toLowerCase() == 'done') return collector.stop('DONE');
 		const colors = ['grey', 'gray', 'red', 'blurple', 'green'];
-		if (!msg.content.split(' ')[0].match(/[0-9]{18}/g) || !colors.includes(msg.content.split(' ')[1])) return message.channel.send('Geçersiz SözDimi');
+		if (!msg.content.split(' ')[0].match(/[0-9]{18}/g) || !colors.includes(msg.content.split(' ')[1])) return message.channel.send('Invalid syntax');
 
 		const role = msg.content.split(' ')[0];
 		// const role = message.guild.roles.cache.get(roleid);
-		if (!role) return message.channel.send('Geçersiz Rol');
+		if (!role) return message.channel.send('Invalid role');
 
 		const color = colors.find(color => color == msg.content.split(' ')[1]);
-		if (!color) return message.channel.send('Geçersiz Renk');
+		if (!color) return message.channel.send('Invalid color');
 
 		const label = msg.content.split(' ').slice(2, msg.content.split(' ').length - 1).join(' ');
 
@@ -41,12 +41,12 @@ module.exports.run = async (client, message, args) => {
 	})
 
 	collector.on('end', async (msgs, reason) => {
-		if (reason == 'bitti') {
+		if (reason == 'DONE') {
 			const embed = new Discord.MessageEmbed()
-				.setTitle('BoomCode')
-        
-				.setDescription('Belirli bir rolü almak için Butonlara Tıklayın')
-				.setColor('#446cec')
+				.setTitle('Button roles!')
+        .setImage('https://cdn.discordapp.com/attachments/892759810355900436/892772945833918464/images.png')
+				.setDescription('Click on the buttons to get the specific role or vice-versa')
+				.setColor('RANDOM')
 				.setTimestamp();
 			Nuggies.buttonroles.create({ message, content: embed, role: brmanager, channelID: message.channel.id })
 		}
@@ -55,8 +55,8 @@ module.exports.run = async (client, message, args) => {
 
 module.exports.config = {
 	name: 'buton-olustur',
-	description: 'Buton Oluşturur!',
-	usage: 'm+buton-olustur',
+	description: 'Creates button role!',
+	usage: '?create-br',
 	botPerms: [],
 	userPerms: ['MANAGE_GUILD'],
 	aliases: [],
